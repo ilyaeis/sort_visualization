@@ -1,0 +1,5 @@
+Ruda-Medium.ttf is the Ruda typeface, licensed under the SIL Open Font
+License, Version 1.1 (https://openfontlicense.org).
+
+This note covers the font file in this folder only. The rest of the
+repository uses the MIT license (see ../../LICENSE).
