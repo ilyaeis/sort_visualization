@@ -342,6 +342,10 @@ int Menu::start(sf::RenderWindow& window) {
 std::vector<sf::Color> Menu::get_colors() {
     return themes[themes_choice];
 }
+void Menu::set_theme(int theme) {
+    themes_choice = theme;
+    check_if_number_is_less_or_greater(themes_choice, 0, themes.size() - 1);
+}
 std::vector<int> Menu::get_array() {
     return array;
 }

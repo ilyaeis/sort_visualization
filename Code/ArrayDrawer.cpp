@@ -16,7 +16,7 @@ ArrayDrawer::ArrayDrawer(int screen_width, int screen_height, int vector_one_ite
     sub_text_size = screen_height / 50;
 }
 
-void ArrayDrawer::draw_colums(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column) {
+void ArrayDrawer::draw_colums(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column) {
     for (int i = 0; i < array.size(); i++) {
         if (i == main_column) {
             window.draw(get_rectangle(i * vector_one_item_size, 0, 1 * vector_one_item_size, array[i], main_column_color));
@@ -30,7 +30,7 @@ void ArrayDrawer::draw_colums(sf::RenderWindow& window, std::vector<int> array, 
     }
 }
 
-void ArrayDrawer::draw_points(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column) {
+void ArrayDrawer::draw_points(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column) {
     for (int i = 0; i < array.size(); i++) {
         if (i == main_column) {
             window.draw(get_circle(vector_one_item_size * 2, i * vector_one_item_size - vector_one_item_size, screen_height - array[i] - vector_one_item_size, main_column_color));
@@ -44,7 +44,7 @@ void ArrayDrawer::draw_points(sf::RenderWindow& window, std::vector<int> array, 
     }
 }
 
-void ArrayDrawer::draw_circumference(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column) {
+void ArrayDrawer::draw_circumference(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column) {
 
     float radius_for_circle_of_dots = screen_height / 3;
     float radius_for_dots = screen_height / array.size();
@@ -92,7 +92,7 @@ void ArrayDrawer::draw_circumference(sf::RenderWindow& window, std::vector<int> 
     }
 }
 
-void ArrayDrawer::draw_spiral(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column) {
+void ArrayDrawer::draw_spiral(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column) {
     float color_for_element = 360.0 / screen_height;
     float angel_per_element = 360.0 / array.size() * pi / 180.0;
 
@@ -128,7 +128,7 @@ void ArrayDrawer::draw_spiral(sf::RenderWindow& window, std::vector<int> array, 
     }
 }
 
-void ArrayDrawer::draw_pyramid(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column) {
+void ArrayDrawer::draw_pyramid(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column) {
 
     float height_of_pyramid = screen_height / 2.0;
     float Ox = screen_width / 2.0;
@@ -155,7 +155,7 @@ void ArrayDrawer::draw_pyramid(sf::RenderWindow& window, std::vector<int> array,
     }
 }
 
-void ArrayDrawer::draw_array(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column, bool reset_screen) {
+void ArrayDrawer::draw_array(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column, bool reset_screen) {
 
     if (reset_screen) {
         window.clear(background_color);
@@ -191,7 +191,11 @@ void ArrayDrawer::draw_array(sf::RenderWindow& window, std::vector<int> array, i
 
         window.draw(get_text(speed_string, sub_text_size, screen_width / 2, screen_height * 0.82, screen_width, screen_height, column_color, background_color, font));
     }
-    if (reset_screen) window.display();
+    if (reset_screen) {
+        // The target is the window, or an offscreen texture in record mode.
+        if (auto* w = dynamic_cast<sf::RenderWindow*>(&window)) w->display();
+        else if (auto* t = dynamic_cast<sf::RenderTexture*>(&window)) t->display();
+    }
 }
 
 void ArrayDrawer::set_sort_name(std::string sort_name) {
