@@ -51,9 +51,28 @@ jobs:
           name: sort_visualization-${{ matrix.name }}
           path: sort_visualization-${{ matrix.name }}.zip
 
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 6.0.13
+
+      - name: Build
+        run: ./build_web.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sortvis-web
+          path: |
+            web/dist/sortvis.js
+            web/dist/sortvis.wasm
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    needs: [build, web]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -64,5 +83,8 @@ jobs:
           merge-multiple: true
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.zip
+          files: |
+            dist/*.zip
+            dist/sortvis.js
+            dist/sortvis.wasm
           generate_release_notes: true

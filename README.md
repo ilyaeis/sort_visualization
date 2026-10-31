@@ -99,6 +99,26 @@ ffmpeg -framerate 15 -i frames/f%06d.png \
   clip.gif
 ```
 
+## Web build
+
+The sorting and shuffle algorithms also build to WebAssembly. `Code/SortAlgorithms.cpp` and `Code/ShuffleAlgorithms.cpp` compile unchanged. Without SFML, `Code/AnotherFunc.hpp` leaves out the SFML parts (when `__EMSCRIPTEN__` or `SORTVIS_NO_SFML` is defined).
+
+`web/shim.cpp` takes the place of `Main.cpp` and the menu:
+
+- Its `drawing()` does not draw. It records the steps, like record mode: a dry run counts the steps, then the real run saves every n-th step.
+- It has the same `rand()` as glibc, so a seed gives the same shuffle as the Linux program.
+- It fills the array like the menu: 500 values, ascending, descending or random.
+
+The log is a list of 32-bit integers: `[total steps, stride, frame count]`, then for each frame `first, second, k` and `k` pairs `(index, value)`: the cells that changed since the frame before. The last frame has `first = second = -1` and shows the sorted array.
+
+To build, install [emsdk](https://emscripten.org/docs/getting_started/downloads.html), then:
+
+```sh
+./build_web.sh    # writes web/dist/sortvis.js and web/dist/sortvis.wasm
+```
+
+The [CI](.github/workflows/build.yml) builds it too (artifact `sortvis-web`). The page at https://ilyaeis.github.io/apps/sorting/ uses it. The drawing there is a JavaScript port of `ArrayDrawer.cpp`.
+
 ## Algorithms
 
 Each strip shows, from left to right: the shuffled array, the sort at about 25 %, 50 % and 75 % of its steps, and the sorted array. Columns layout, theme 0, seed 1.
@@ -204,6 +224,7 @@ Sorts the first 2/3, the last 2/3, then the first 2/3 again. It is very slow.
 - C++17
 - SFML 2.6.2 (downloaded by CMake, linked static)
 - CMake
+- Emscripten (web build only)
 
 ## Status
 

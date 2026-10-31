@@ -4,3 +4,4 @@ Release/
 .vs/
 *.exe
 *.dll
+web/dist/

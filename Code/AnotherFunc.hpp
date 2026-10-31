@@ -1,11 +1,21 @@
 #pragma once
 
+#if !defined(__EMSCRIPTEN__) && !defined(SORTVIS_NO_SFML)
 #include <SFML/Graphics.hpp>
+#else
+// Web build (web/shim.cpp) and native tests: no SFML.
+// Include only what the sort and shuffle code needs.
+#include <string>
+#include <cstdlib>
+#include <cmath>
+#include <algorithm>
+#endif
 #include <vector>
 #include <math.h>
 
 void drawing(std::vector<int>* array, int i, int first_column, int second_column);
 
+#if !defined(__EMSCRIPTEN__) && !defined(SORTVIS_NO_SFML)
 sf::RectangleShape get_rectangle(int x, int y, int width, int height, sf::Color color);
 sf::ConvexShape get_convex_shape(std::vector<float>  cords, sf::Color color, sf::Color outline_color, int outline_size);
 sf::Vertex* get_line(float x1, float y1, float x2, float y2, sf::Color color);
@@ -16,6 +26,7 @@ sf::Text get_text(std::string text_line, int size, int x, int y, int screen_widt
 sf::Font get_font();
 
 sf::Color HSL_to_RGB(float h, float s, float l);
+#endif
 
 int find_index_of_max(std::vector<int> array);
 int index_of_num_next_after(int num, std::vector<int> array);
