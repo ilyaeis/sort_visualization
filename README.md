@@ -6,6 +6,33 @@ A sorting algorithm visualizer in C++ with SFML: 16 algorithms, 5 ways to draw t
 
 All images on this page are frames saved by the program itself (see [Record](#record)).
 
+## Run
+
+### Download
+
+Get the zip for your system from the [Releases page](https://github.com/ilyaeis/sort_visualization/releases/latest) (`linux-x64` or `windows-x64`), unzip it and start `sort_visualization` (`sort_visualization.exe` on Windows). The font is built into the program, and SFML is linked in, so nothing else needs to be installed. On Linux you need a desktop session with OpenGL.
+
+### Build from source
+
+You need a C++17 compiler and CMake 3.16 or newer. CMake downloads and builds SFML 2.6.2 for you (static), so you do not install SFML.
+
+```sh
+git clone https://github.com/ilyaeis/sort_visualization.git
+cd sort_visualization
+cmake -B build && cmake --build build
+./build/sort_visualization          # Windows: build\Debug\sort_visualization.exe or build\Release\...
+```
+
+On Debian or Ubuntu, install the build tools and the system libraries that SFML needs once:
+
+```sh
+sudo apt install build-essential cmake git libx11-dev libxrandr-dev libxcursor-dev libudev-dev libfreetype-dev libgl1-mesa-dev
+```
+
+On Windows, use Visual Studio (with the C++ workload) or MinGW; the same two `cmake` commands work. For a faster program on Windows with Visual Studio, add `--config Release` to the build command.
+
+You can run the program from any folder.
+
 ## What it does
 
 - 16 sorting algorithms on an array of 500 values.
@@ -42,25 +69,6 @@ Code: `Code/Main.cpp` (main loop, `drawing()`, record mode), `Code/Menu.cpp`, `C
 
 Known detail: Esc during a sort restarts the menu with a recursive call to `main()`. This is kept as is.
 
-## Run
-
-You need a C++17 compiler, CMake 3.10 or newer, and SFML 2.x (graphics, window, system).
-
-Linux (Debian or Ubuntu):
-
-```sh
-sudo apt install build-essential cmake libsfml-dev
-cmake -S . -B build
-cmake --build build
-cd build && ./sort_visualization
-```
-
-If SFML is not installed in a system path, tell CMake where it is: `cmake -S . -B build -DCMAKE_PREFIX_PATH=<sfml prefix>`. The build was tested on Linux with SFML 2.6.2 this way.
-
-The program loads `font/Ruda-Medium.ttf` from the working directory. CMake copies the font next to the executable, so run the program from `build/`.
-
-Windows: install SFML 2.x, point CMake to it with `-DSFML_DIR=<path>/lib/cmake/SFML`, and build with Visual Studio or MinGW. Put the SFML DLLs next to the executable. This repository does not contain pre-built binaries or DLLs.
-
 ## Record
 
 Record mode saves one run as PNG frames. It skips the menu and does not open a window: it draws into an offscreen texture. It runs one clip (sorted array, shuffle, sort, sorted array) and exits. Without `SORTVIS_RECORD` the program works as before.
@@ -77,9 +85,8 @@ Record mode saves one run as PNG frames. It skips the menu and does not open a w
 The program first runs the algorithm once without drawing to count its steps. Then it saves one frame every (steps / frames) steps. So a slow algorithm and a fast one both give about the same number of frames.
 
 ```sh
-cd build
 mkdir -p frames
-SORTVIS_RECORD=frames SORTVIS_LAYOUT=spiral SORTVIS_SORT=Radix SORTVIS_FRAMES=60 ./sort_visualization
+SORTVIS_RECORD=frames SORTVIS_LAYOUT=spiral SORTVIS_SORT=Radix SORTVIS_FRAMES=60 ./build/sort_visualization
 ```
 
 SFML still needs a graphics context, so on Linux it needs a running X or Wayland session, but no window appears.
@@ -195,7 +202,7 @@ Sorts the first 2/3, the last 2/3, then the first 2/3 again. It is very slow.
 ## Stack
 
 - C++17
-- SFML 2.5 or newer (tested with 2.6.2)
+- SFML 2.6.2 (downloaded by CMake, linked static)
 - CMake
 
 ## Status

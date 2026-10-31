@@ -75,9 +75,13 @@ sf::Text get_text(std::string text_line, int size, int x, int y, int screen_widt
     return text;
 }
 
+// The font bytes are compiled in (see CMakeLists.txt), so no file lookup is needed.
+extern const unsigned char font_data[];
+extern const unsigned long font_data_size;
+
 sf::Font get_font() {
     sf::Font font = sf::Font{};
-    if (!font.loadFromFile("font/Ruda-Medium.ttf"))
+    if (!font.loadFromMemory(font_data, font_data_size))
     {
         sf::err() << "Couldn't load font\n";
     }

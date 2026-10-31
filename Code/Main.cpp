@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 
 // ---------------- const values
 int main();
@@ -19,14 +20,19 @@ int faster;
 int const max_speed = vector_lenght;
 bool draw = true;
 
-// Created in main(). Record mode draws offscreen and never opens it.
-sf::RenderWindow window;
+// SFML is a static library. Objects that use SFML (window, fonts, textures) must not be
+// globals: they would be built before SFML is ready and destroyed after it is gone.
+// So they are created on first use, inside functions.
+// The window is created in main(). Record mode draws offscreen and never opens it.
+sf::RenderWindow& get_window() { static sf::RenderWindow w; return w; }
+#define window get_window()
 
 sf::Time long_sleep = sf::seconds(2);
 sf::Time short_sleep = sf::seconds(0.1);
 
-ArrayDrawer drawer(screen_width, screen_height, vector_one_item_size, max_speed);
-Menu menu(screen_width, screen_height);
+ArrayDrawer& get_drawer() { static ArrayDrawer d(screen_width, screen_height, vector_one_item_size, max_speed); return d; }
+Menu& get_menu() { static Menu m(screen_width, screen_height); return m; }
+#define menu get_menu()
 
 bool key_press_for_visualizer(int draw) {
 	sf::Event event;
@@ -36,7 +42,7 @@ bool key_press_for_visualizer(int draw) {
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				drawer.set_sort_name("");
+				get_drawer().set_sort_name("");
 				main();
 				exit(1);
 				
@@ -48,7 +54,7 @@ bool key_press_for_visualizer(int draw) {
 				} else if (faster < max_speed) {
 					faster += faster_const;
 				}
-				drawer.set_speed(faster);
+				get_drawer().set_speed(faster);
 				return false;
 			}
 			if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::A)
@@ -56,7 +62,7 @@ bool key_press_for_visualizer(int draw) {
 				if (faster != faster_const) {
 					faster = faster_const;
 				}
-				drawer.set_speed(1);
+				get_drawer().set_speed(1);
 				return true;
 			}
 		}
@@ -73,15 +79,17 @@ struct Recorder {
 	long steps = 0, every = 1;   // save a frame every `every` steps
 	int frame = 0;
 	std::string dir;
-	sf::RenderTexture canvas;
+	std::unique_ptr<sf::RenderTexture> canvas;  // made in record(): a global texture would need GL before SFML is ready
 	ArrayDrawer drawer{ screen_width, screen_height, int(vector_one_item_size), 0 };  // 0: no speed line
-} rec;
+};
+Recorder& get_rec() { static Recorder r; return r; }
+#define rec get_rec()
 
 void record_frame(const std::vector<int>& array, int first_column, int second_column) {
-	rec.drawer.draw_array(rec.canvas, array, first_column, second_column, 1);
+	rec.drawer.draw_array(*rec.canvas, array, first_column, second_column, 1);
 	char path[1024];
 	std::snprintf(path, sizeof path, "%s/f%06d.png", rec.dir.c_str(), rec.frame++);
-	rec.canvas.getTexture().copyToImage().saveToFile(path);
+	rec.canvas->getTexture().copyToImage().saveToFile(path);
 }
 
 void drawing(std::vector<int> *array, int i, int first_column, int second_column) {
@@ -92,7 +100,7 @@ void drawing(std::vector<int> *array, int i, int first_column, int second_column
 	}
 	draw = key_press_for_visualizer(draw);
 	if (draw || i % faster == 0) {
-		drawer.draw_array(window, *array, first_column, second_column, 1);
+		get_drawer().draw_array(window, *array, first_column, second_column, 1);
 	}
 }
 
@@ -109,27 +117,27 @@ void sort_visualization(){
 
 	draw = true;
 	faster = faster_const;
-	drawer.set_speed(1);
+	get_drawer().set_speed(1);
 
 	for (int i = 0; i < sort_order.size(); i++) {
 
-		drawer.draw_array(window, array, -1, -1, 1);
+		get_drawer().draw_array(window, array, -1, -1, 1);
 		sf::sleep(long_sleep);
 
-		drawer.set_sort_name("Shuffle");
+		get_drawer().set_sort_name("Shuffle");
 		start_shuffle(&array, shuffle_order[i]);
 		
-		drawer.draw_array(window, array, -1, -1, 1);
+		get_drawer().draw_array(window, array, -1, -1, 1);
 		sf::sleep(long_sleep);
 
 		draw = true;
 		faster = faster_const;
-		drawer.set_speed(1);
+		get_drawer().set_speed(1);
 
-		drawer.set_sort_name(sort_order[i] + " sort");
+		get_drawer().set_sort_name(sort_order[i] + " sort");
 		start_right_sort(&array, sort_order[i]);
 
-		drawer.draw_array(window, array, -1, -1, 1);
+		get_drawer().draw_array(window, array, -1, -1, 1);
 		sf::sleep(long_sleep);
 	}	
 	sf::sleep(long_sleep);
@@ -169,7 +177,8 @@ int record() {
 	int frames = env_int("SORTVIS_FRAMES", 300);
 	srand(env_int("SORTVIS_SEED", 1));
 
-	if (!rec.canvas.create(screen_width, screen_height)) return 1;
+	rec.canvas.reset(new sf::RenderTexture);
+	if (!rec.canvas->create(screen_width, screen_height)) return 1;
 	menu.set_theme(env_int("SORTVIS_THEME", 0));
 	std::vector<sf::Color> colors = menu.get_colors();
 	rec.drawer.set_colors(colors[0], colors[2], colors[3], colors[4]);
@@ -213,10 +222,10 @@ int main()
 	srand(time(NULL));
 
 	while (true) {
-		drawer.set_choice(menu.start(window));
+		get_drawer().set_choice(menu.start(window));
 
 		std::vector<sf::Color> colors = menu.get_colors();
-		drawer.set_colors(colors[0], colors[2], colors[3], colors[4]);
+		get_drawer().set_colors(colors[0], colors[2], colors[3], colors[4]);
 
 		sort_visualization();
 	}
