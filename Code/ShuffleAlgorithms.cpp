@@ -6,6 +6,7 @@ Shuffle generate_shuffle(bool start) {
 	while (start && shuffler.type_of_shuffle == 2) { shuffler.type_of_shuffle = rand() % (shuffle_count - 2); }
 
 	if (shuffler.type_of_shuffle <= shuffle_count - 2) { return shuffler; }
+	return shuffler;
 }
 #include <iostream>
 void start_shuffle(std::vector<int>* array, Shuffle shuffler) {

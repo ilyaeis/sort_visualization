@@ -19,11 +19,11 @@ private:
 	std::vector<std::string> settings_text = { "Settings", "Themes", "How Fill Array", "Sort algorithms order", "Exit"};
 	int settings_choice = 1;
 	//												   text and column color,         selected text color            backgraund color               main column color              sub column color
-	std::vector< std::vector<sf::Color> > themes = { { sf::Color::Color(255,183,  3), sf::Color::Color(251,133,  0), sf::Color::Color(  2, 48, 71), sf::Color::Color(247, 37,133), sf::Color::Color(114,  9,183) },
-													 { sf::Color::Color(141,153,174), sf::Color::Color(237,242,244), sf::Color::Color( 43, 45, 66), sf::Color::Color(239, 35, 60), sf::Color::Color(217,  4, 41) },
-													 { sf::Color::Color(138,201, 38), sf::Color::Color( 25,130,196), sf::Color::Color(106, 76,147), sf::Color::Color(255, 89, 94), sf::Color::Color(255,202, 58) },
-													 { sf::Color::Color(255,255,255), sf::Color::Color(225,229,242), sf::Color::Color(  2, 43, 58), sf::Color::Color(249,233,236), sf::Color::Color(191,215,255) },
-													 { sf::Color::Color(157, 78,221), sf::Color::Color(199,125,255), sf::Color::Color( 16,  0, 43), sf::Color::Color(199,125,255), sf::Color::Color(224,170,255) } };
+	std::vector< std::vector<sf::Color> > themes = { { sf::Color(255,183,  3), sf::Color(251,133,  0), sf::Color(  2, 48, 71), sf::Color(247, 37,133), sf::Color(114,  9,183) },
+													 { sf::Color(141,153,174), sf::Color(237,242,244), sf::Color( 43, 45, 66), sf::Color(239, 35, 60), sf::Color(217,  4, 41) },
+													 { sf::Color(138,201, 38), sf::Color( 25,130,196), sf::Color(106, 76,147), sf::Color(255, 89, 94), sf::Color(255,202, 58) },
+													 { sf::Color(255,255,255), sf::Color(225,229,242), sf::Color(  2, 43, 58), sf::Color(249,233,236), sf::Color(191,215,255) },
+													 { sf::Color(157, 78,221), sf::Color(199,125,255), sf::Color( 16,  0, 43), sf::Color(199,125,255), sf::Color(224,170,255) } };
 	int themes_choice = rand() % themes.size();
 
 	std::vector<std::string> ways_of_filling_array = { "Ascending order", "Descending order", "Random order"};
