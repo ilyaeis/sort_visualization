@@ -21,13 +21,13 @@ private:
 public:
 	ArrayDrawer(int screen_width, int screen_height, int vector_one_item_size, int max_speed);
 
-	void draw_colums(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column);
-	void draw_points(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column);
-	void draw_circumference(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column);
-	void draw_spiral(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column);
-	void draw_pyramid(sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column);
+	void draw_colums(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column);
+	void draw_points(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column);
+	void draw_circumference(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column);
+	void draw_spiral(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column);
+	void draw_pyramid(sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column);
 
-	void draw_array( sf::RenderWindow& window, std::vector<int> array, int main_column, int sub_column, bool reset_screen);
+	void draw_array( sf::RenderTarget& window, std::vector<int> array, int main_column, int sub_column, bool reset_screen);
 	void set_sort_name(std::string sort_name);
 	void set_choice(int choice);
 	void set_speed(int speed);

@@ -58,6 +58,7 @@ public:
 	int start(sf::RenderWindow& window);
 
 	std::vector<sf::Color> get_colors();
+	void set_theme(int theme);
 	std::vector<int> get_array();
 	std::vector<std::string> get_sort_table();
 };
